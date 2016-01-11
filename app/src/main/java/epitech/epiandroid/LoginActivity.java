@@ -307,23 +307,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-            String url ="http://epitech-api.herokuapp.com/login?login="+mLogin+"&password="+mPassword;
-
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.v("CONNECTION", "Response is: " + response);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.v("CONNECTION", "Did not work");
-                }
-            });
-
-            queue.add(stringRequest);
 
             for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");

@@ -1,12 +1,16 @@
 package epitech.epiandroid;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -15,29 +19,37 @@ import org.json.JSONObject;
 public class RequestManager {
     private static RequestManager RequestInstance = null;
 
-    private String token;
+    private String _token;
+    private RequestQueue _requestQueue;
     private static final String REQUEST_URL = "http://epitech-api.herokuapp.com";
+    private static Context _context;
 
-    private RequestManager(){
-
+    private RequestManager(Context context){
+        _context = context;
+        if (_requestQueue == null)
+            _requestQueue = Volley.newRequestQueue(_context);
     }
 
-    public static RequestManager getInstance(){
-        if (RequestInstance == null)
-        {
-            RequestInstance = new RequestManager();
+    public static RequestManager getInstance(Context context){
+        if (RequestInstance == null) {
+            RequestInstance = new RequestManager(context);
         }
         return RequestInstance;
     }
 
-    public void Login(String login, String password) {
+    public void Login(String login, String password, final APIListener<Boolean> listener) {
         String finalRequest = REQUEST_URL+"/login?login="+login+"&password="+password;
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
 
                     @Override
-                    public void onResponse(JSONObject response) {
-
+                    public void onResponse(JSONObject response){
+                        try {
+                            _token = response.getString("token");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        listener.getResult(true);
                     }
                 }, new Response.ErrorListener() {
 
