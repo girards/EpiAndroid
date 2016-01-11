@@ -1,8 +1,13 @@
 package epitech.epiandroid;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,9 +17,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
-public class  MainActivity extends AppCompatActivity
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ImageView profilPic;
+    private UserGetPhotoTask mPhotoTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,9 @@ public class  MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mPhotoTask = new UserGetPhotoTask(RequestManager.getInstance(getApplicationContext()).getLogin());
+        mPhotoTask.execute();
     }
 
     @Override
@@ -97,5 +114,52 @@ public class  MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public class UserGetPhotoTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private final String mLogin;
+        URL url;
+        private Boolean done = false;
+
+        UserGetPhotoTask(String email) {
+            mLogin = email;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+
+            RequestManager.getInstance(getApplicationContext()).getPhotoUrl(mLogin, new APIListener<String>() {
+                @Override
+                public void getResult(String object) {
+                    try {
+                        url = new URL(object);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    done = true;
+                }
+            });
+
+            while (done != true) ;
+            Bitmap input = null;
+            try {
+                input = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return input;
+        }
+
+        @Override
+        protected void onPostExecute(final Bitmap input) {
+            profilPic = (ImageView) findViewById(R.id.imageView);
+            profilPic.setImageBitmap(input);
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
     }
 }
