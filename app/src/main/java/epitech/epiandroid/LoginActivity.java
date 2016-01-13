@@ -288,8 +288,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mLogin;
         private final String mPassword;
-        private Boolean connected = false;
-        private Boolean done = false;
 
         UserLoginTask(String email, String password) {
             mLogin = email;
@@ -299,30 +297,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            RequestManager.getInstance(getApplicationContext()).Login(mLogin, mPassword, new APIListener<Boolean>() {
+            RequestManager.getInstance().Login(mLogin, mPassword, new APIListener<Boolean>() {
                 @Override
                 public void getResult(Boolean object) {
-                    connected = object;
-                    done = true;
+                    if (object) {
+                        finish();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                    }
                 }
             });
-            while (!done);
-            Log.d("Test", String.valueOf(connected));
-            return connected;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                finish();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
+            return true;
         }
 
         @Override

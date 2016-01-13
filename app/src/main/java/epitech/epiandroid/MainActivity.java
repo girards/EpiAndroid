@@ -1,5 +1,6 @@
 package epitech.epiandroid;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -27,8 +31,7 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ImageView profilPic;
-    private UserGetPhotoTask mPhotoTask = null;
+    private ImageView _profilePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +55,22 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mPhotoTask = new UserGetPhotoTask(RequestManager.getInstance(getApplicationContext()).getLogin());
-        mPhotoTask.execute();
+        if (_profilePicture == null) {
+            Log.d("Test", "NULLLL");
+        }
+        RequestManager.getInstance().getPhotoUrl("girard_s", new APIListener<Bitmap>() {
+            @Override
+            public void getResult(Bitmap object) {
+                _profilePicture.setImageBitmap(object);
+            }
+        });
+
     }
+
 
     @Override
     public void onBackPressed() {
@@ -71,9 +84,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        _profilePicture = (ImageView)findViewById(R.id.profilePicture);
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        // Inflate the menu; this adds items to the action bar if it is present
+            return true;
     }
 
     @Override
@@ -114,52 +128,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public class UserGetPhotoTask extends AsyncTask<Void, Void, Bitmap> {
-
-        private final String mLogin;
-        URL url;
-        private Boolean done = false;
-
-        UserGetPhotoTask(String email) {
-            mLogin = email;
-        }
-
-        @Override
-        protected Bitmap doInBackground(Void... params) {
-
-            RequestManager.getInstance(getApplicationContext()).getPhotoUrl(mLogin, new APIListener<String>() {
-                @Override
-                public void getResult(String object) {
-                    try {
-                        url = new URL(object);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                    done = true;
-                }
-            });
-
-            while (done != true) ;
-            Bitmap input = null;
-            try {
-                input = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return input;
-        }
-
-        @Override
-        protected void onPostExecute(final Bitmap input) {
-            profilPic = (ImageView) findViewById(R.id.imageView);
-            profilPic.setImageBitmap(input);
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
     }
 }
