@@ -20,7 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     private TextView _title;
     private TextView _email;
     private EpitechUser _currentUser;
+    private ListView messagesView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +48,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -63,6 +58,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        messagesView = (ListView) findViewById(R.id.listView);
+
 
 
         RequestManager.getInstance().getPhotoUrl(RequestManager.getInstance().getLogin(), new APIListener<Bitmap>() {
@@ -78,6 +76,14 @@ public class MainActivity extends AppCompatActivity
                 _currentUser = object;
                 _title.setText(myWordUtils.capitalize(_currentUser.getTitle()));
                 _email.setText(_currentUser.getMail());
+            }
+        });
+
+        RequestManager.getInstance().getUserProject(new APIListener<List<ProjectOverview>>() {
+            @Override
+            public void getResult(List<ProjectOverview> object) {
+                ProjectOverviewAdapter adapter  = new ProjectOverviewAdapter(MainActivity.this, object);
+                messagesView.setAdapter(adapter);
             }
         });
     }

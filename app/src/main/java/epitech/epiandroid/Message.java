@@ -39,6 +39,11 @@ public class Message {
         return _title;
     }
 
+    public MessageUser getUser()
+    {
+        return _user;
+    }
+
     public String getContent()
     {
         return _content;
