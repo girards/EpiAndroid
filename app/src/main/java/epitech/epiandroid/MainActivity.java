@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private ImageView _profilePicture;
+    private TextView _title;
+    private TextView _email;
+    private EpitechUser _currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +64,22 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (_profilePicture == null) {
-            Log.d("Test", "NULLLL");
-        }
-        RequestManager.getInstance().getPhotoUrl("girard_s", new APIListener<Bitmap>() {
+
+        RequestManager.getInstance().getPhotoUrl(RequestManager.getInstance().getLogin(), new APIListener<Bitmap>() {
             @Override
             public void getResult(Bitmap object) {
                 _profilePicture.setImageBitmap(object);
             }
         });
 
+        RequestManager.getInstance().getUserData(RequestManager.getInstance().getLogin(), new APIListener<EpitechUser>() {
+            @Override
+            public void getResult(EpitechUser object) {
+                _currentUser = object;
+                _title.setText(myWordUtils.capitalize(_currentUser.getTitle()));
+                _email.setText(_currentUser.getMail());
+            }
+        });
     }
 
 
@@ -85,6 +96,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         _profilePicture = (ImageView)findViewById(R.id.profilePicture);
+        _email = (TextView) findViewById(R.id.mail);
+        _title = (TextView) findViewById(R.id.title);
+
         getMenuInflater().inflate(R.menu.main, menu);
         // Inflate the menu; this adds items to the action bar if it is present
             return true;

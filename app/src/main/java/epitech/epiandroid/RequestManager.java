@@ -11,6 +11,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,10 +85,31 @@ public class RequestManager {
         _requestQueue.add(ir);
     }
 
+    public void getUserData(String login, final APIListener<EpitechUser> listener)
+    {
+        String finalRequest = REQUEST_URL + "/user?token=" + _token + "&user=" + login;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) throws JSONException {
+                            Gson gson = new GsonBuilder().create();
+                            EpitechUser user = gson.fromJson(response.toString(), EpitechUser.class);
+                            Log.d("USER", "User Login is "+ user.getLogin() + ", Title is " + user.getTitle() + ", email is " + user.getMail());
+                            listener.getResult(user);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+        _requestQueue.add(jsObjRequest);
+    }
+
     public void getPhotoUrl(String login, final APIListener<Bitmap> listener) {
         String finalRequest = REQUEST_URL + "/photo?token=" + _token + "&login=" + login;
 
-        Log.d("Request is ", finalRequest);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
 
