@@ -3,11 +3,14 @@ package epitech.epiandroid;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -29,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements PlanningFragment.OnFragmentInteractionListener, GradesFragment.OnFragmentInteractionListener,
@@ -39,21 +44,14 @@ public class MainActivity extends AppCompatActivity
     private TextView _email;
     private EpitechUser _currentUser;
 
+    private DrawerLayout mDrawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView nvDrawer = (NavigationView) findViewById(R.id.nav_view);
@@ -81,13 +79,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        RequestManager.getInstance().getUserProject(new APIListener<List<ProjectOverview>>() {
-            @Override
-            public void getResult(List<ProjectOverview> object) {
-                ProjectOverviewAdapter adapter = new ProjectOverviewAdapter(MainActivity.this, object);
-                messagesView.setAdapter(adapter);
-            }
-        });
+
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

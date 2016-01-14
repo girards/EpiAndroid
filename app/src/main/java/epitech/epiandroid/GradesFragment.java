@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.List;
 
 
 /**
@@ -26,6 +29,7 @@ public class GradesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ListView _messagesView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,12 +62,23 @@ public class GradesFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        _messagesView = (ListView) getView().findViewById(R.id.messageListView);
+        RequestManager.getInstance().getUserProject(new APIListener<List<ProjectOverview>>() {
+            @Override
+            public void getResult(List<ProjectOverview> object) {
+                ProjectOverviewAdapter adapter = new ProjectOverviewAdapter(ApplicationExt.getContext(), object);
+                _messagesView.setAdapter(adapter);
+            }
+        });
         return inflater.inflate(R.layout.fragment_grades, container, false);
     }
 
