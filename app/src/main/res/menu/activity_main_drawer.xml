@@ -12,12 +12,12 @@
             android:title="Grades" />
         <item
             android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:icon="@drawable/ic_projets"
+            android:title="Projets" />
         <item
             android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:icon="@drawable/ic_messages"
+            android:title="Messages" />
     </group>
 
     <item android:title="Communicate">

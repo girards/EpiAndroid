@@ -3,11 +3,14 @@ package epitech.epiandroid;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,12 +34,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements PlanningFragment.OnFragmentInteractionListener, GradesFragment.OnFragmentInteractionListener,
+        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener {
 
     private ImageView _profilePicture;
     private TextView _title;
     private TextView _email;
     private EpitechUser _currentUser;
+    private DrawerLayout mDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +59,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView nvDrawer = (NavigationView) findViewById(R.id.nav_view);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
         toggle.syncState();
 
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
+        setupDrawerContent(nvDrawer);
 
         RequestManager.getInstance().getPhotoUrl(RequestManager.getInstance().getLogin(), new APIListener<Bitmap>() {
             @Override
@@ -82,6 +86,55 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the planet to show based on
+        // position
+        Fragment fragment = null;
+        Class fragmentClass;
+            switch(menuItem.getItemId()) {
+                case R.id.nav_camera:
+                    fragmentClass = PlanningFragment.class;
+                    break;
+                case R.id.nav_gallery:
+                    fragmentClass = GradesFragment.class;
+                    break;
+                case R.id.nav_slideshow:
+                    fragmentClass = ProjetsFragment.class;
+                    break;
+                case R.id.nav_manage:
+                    fragmentClass = MessagesFragment.class;
+                    break;
+                default:
+                    fragmentClass = PlanningFragment.class;
+            }
+
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+            // Highlight the selected item, update the title, and close the drawer
+            menuItem.setChecked(true);
+            setTitle(menuItem.getTitle());
+            mDrawer.closeDrawers();
+    }
 
     @Override
     public void onBackPressed() {
@@ -106,19 +159,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
+
+    /*
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -127,6 +178,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            Log.d("blabla", "TEST ALLO BONJOUR");
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -142,5 +194,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+    }
+
+    public void onFragmentInteraction(Uri uri){
+        //you can leave it empty
     }
 }
