@@ -100,7 +100,7 @@ public class RequestManager {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) throws JSONException {
+                    public void onResponse(JSONObject response) {
                             Gson gson = new GsonBuilder().create();
                             EpitechUser user = gson.fromJson(response.toString(), EpitechUser.class);
                             Log.d("USER", "User Login is "+ user.getLogin() + ", Title is " + user.getTitle() + ", email is " + user.getMail());
