@@ -99,7 +99,7 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getFragmentManager();
                                                   //getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
             }
         });
