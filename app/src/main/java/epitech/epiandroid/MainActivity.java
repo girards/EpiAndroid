@@ -37,7 +37,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements PlanningFragment.OnFragmentInteractionListener, GradesFragment.OnFragmentInteractionListener,
-        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener {
+        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener, ProjectViewFragment.OnFragmentInteractionListener {
 
     private ImageView _profilePicture;
     private TextView _title;

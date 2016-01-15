@@ -4,28 +4,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ProjetsFragment.OnFragmentInteractionListener} interface
+ * {@link ProjectViewFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProjetsFragment#newInstance} factory method to
+ * Use the {@link ProjectViewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProjetsFragment extends android.support.v4.app.Fragment {
+public class ProjectViewFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,11 +28,9 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
     private String mParam1;
     private String mParam2;
 
-    private ListView _projectView;
-
     private OnFragmentInteractionListener mListener;
 
-    public ProjetsFragment() {
+    public ProjectViewFragment() {
         // Required empty public constructor
     }
 
@@ -49,15 +40,16 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProjetsFragment.
+     * @return A new instance of fragment ProjectViewFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProjetsFragment newInstance(String param1, String param2) {
-        ProjetsFragment fragment = new ProjetsFragment();
+    public static ProjectViewFragment newInstance(String param1, String param2) {
+        ProjectViewFragment fragment = new ProjectViewFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        Log.d("blabla", "name = " + param1 + " scolar year = " + param2);
         return fragment;
     }
 
@@ -74,39 +66,8 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_projets, container, false);
-
-        _projectView = (ListView) rootView.findViewById(R.id.projectListView);
-        RequestManager.getInstance().getUserProject(new APIListener<List<ProjectOverview>>() {
-            @Override
-            public void getResult(List<ProjectOverview> object) {
-                ProjectOverviewAdapter adapter = new ProjectOverviewAdapter(getContext(), object);
-                _projectView.setAdapter(adapter);
-            }
-        });
-
-        _projectView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProjectOverview projet = (ProjectOverview)_projectView.getItemAtPosition(position);
-                ProjectViewFragment fragment = null;
-
-                try {
-                    fragment = fragment.newInstance(projet.getProjectName(), projet.getScolarYear());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getFragmentManager();
-                                                  //getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-            }
-        });
-
-
-        return rootView;
-        }
+        return inflater.inflate(R.layout.fragment_project_view, container, false);
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
