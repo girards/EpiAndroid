@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.List;
 
 
 /**
@@ -26,6 +29,8 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ListView _messagesView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,8 +68,18 @@ public class MessagesFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_messages, container, false);
+
+        View rootView = inflater.inflate(R.layout.fragment_messages, container, false);
+
+        _messagesView = (ListView) rootView.findViewById(R.id.messagesListView);
+        RequestManager.getInstance().getUserMessage(new APIListener<List<Message>>() {
+            @Override
+            public void getResult(List<Message> object) {
+                MessageAdapter adapter = new MessageAdapter(getContext(), object);
+                _messagesView.setAdapter(adapter);
+            }
+        });
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

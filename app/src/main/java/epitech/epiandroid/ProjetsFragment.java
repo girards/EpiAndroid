@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+
+import java.util.List;
 
 
 /**
@@ -26,6 +29,8 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ListView _projectView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,8 +69,18 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_projets, container, false);
-    }
+        View rootView = inflater.inflate(R.layout.fragment_projets, container, false);
+
+        _projectView = (ListView) rootView.findViewById(R.id.projectListView);
+        RequestManager.getInstance().getUserProject(new APIListener<List<ProjectOverview>>() {
+            @Override
+            public void getResult(List<ProjectOverview> object) {
+                ProjectOverviewAdapter adapter = new ProjectOverviewAdapter(getContext(), object);
+                _projectView.setAdapter(adapter);
+            }
+        });
+        return rootView;
+        }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
