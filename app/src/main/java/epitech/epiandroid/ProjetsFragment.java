@@ -91,7 +91,7 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
                 ProjectViewFragment fragment = null;
 
                 try {
-                    fragment = fragment.newInstance(projet.getProjectName(), projet.getScolarYear());
+                    fragment = fragment.newInstance(projet);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

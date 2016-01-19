@@ -140,6 +140,31 @@ public class RequestManager {
         _requestQueue.add(jsArrayRequest);
     }
 
+    public void getProjectData(String scolarYear, String codeModule, String codeInstance, String codeActivity, final APIListener<Project> listener) {
+        String finalRequest = REQUEST_URL + "/project?token=" + _token
+                                            + "&scolaryear=" + scolarYear
+                                            + "&codemodule=" + codeModule
+                                            + "&codeinstance=" + codeInstance
+                                            + "&codeacti=" + codeActivity;
+
+        Log.d("GetPROJECTDATA", "Final Request is " + finalRequest);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(
+                Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) throws JSONException {
+                Gson gson = new GsonBuilder().create();
+                Project project = gson.fromJson(response.toString(), Project.class);
+                listener.getResult(project);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error in on ErrorResponse", error.getMessage());
+            }
+        });
+        _requestQueue.add(jsObjRequest);
+    }
+
     public void getUserProject(final APIListener<List<ProjectOverview>> listener)
     {
         String finalRequest = REQUEST_URL + "/projects?token=" + _token;

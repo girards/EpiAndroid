@@ -2,6 +2,7 @@ package epitech.epiandroid;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class ProjectOverviewAdapter extends ArrayAdapter<ProjectOverview> {
 
 
         _viewHolder.project.setText(project.getProjectName());
+        _viewHolder.project.setTextColor(Color.parseColor(String.format("#%X", project.getModuleCode().hashCode())));
         _viewHolder.module.setText(Html.fromHtml(project.getModuleTitle()));
         if (project.isRegistered() == true)
             _viewHolder.registered.setImageDrawable(ApplicationExt.getContext().getResources().getDrawable(R.mipmap.tick7));

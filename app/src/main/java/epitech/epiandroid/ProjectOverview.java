@@ -1,5 +1,8 @@
 package epitech.epiandroid;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -23,7 +26,7 @@ public class ProjectOverview {
     @SerializedName("title_module")
     private String _moduleTitle;
 
-    @SerializedName("code_module")
+    @SerializedName("codemodule")
     private String _moduleCode;
 
     @SerializedName("project")
@@ -36,6 +39,8 @@ public class ProjectOverview {
     {
 
     }
+
+
 
     public String getActivityType() {
         return _activityType;
