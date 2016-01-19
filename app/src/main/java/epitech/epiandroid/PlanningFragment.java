@@ -1,12 +1,25 @@
 package epitech.epiandroid;
 
 import android.content.Context;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.alamkanak.weekview.MonthLoader;
+import com.alamkanak.weekview.WeekView;
+import com.alamkanak.weekview.WeekViewEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -17,9 +30,16 @@ import android.view.ViewGroup;
  * Use the {@link PlanningFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlanningFragment extends android.support.v4.app.Fragment {
+public class PlanningFragment extends android.support.v4.app.Fragment
+        implements MonthLoader.MonthChangeListener, WeekView.EventClickListener, WeekView.EventLongPressListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private WeekView mWeekView;
+    private View mView;
+    private WeekView.EventClickListener mEventClickListener;
+    private WeekView.EventLongPressListener mEventLongPressListener;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -63,8 +83,24 @@ public class PlanningFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment_planning, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_planning, container, false);
+        // Get a reference for the week view in the layout.
+
+
+        mWeekView = (WeekView) mView.findViewById(R.id.weekView);
+
+        // Set an action when any event is clicked.
+        mWeekView.setOnEventClickListener(mEventClickListener);
+
+        // The week view has infinite scrolling horizontally. We have to provide the events of a
+        // month every time the month changes on the week view.
+
+        mWeekView.setMonthChangeListener(mMonthChangeListener);
+
+        // Set long press listener for events.
+        mWeekView.setEventLongPressListener(mEventLongPressListener);
+        return mView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -90,6 +126,38 @@ public class PlanningFragment extends android.support.v4.app.Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    @Override
+    public void onEventClick(WeekViewEvent event, RectF eventRect) {
+
+    }
+
+    @Override
+    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+
+    }
+
+    MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
+        @Override
+        public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
+            // Populate the week view with some events.
+            List<WeekViewEvent> events = getEvents(newYear, newMonth);
+            return events;
+        }
+    };
+
+    @Override
+    public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
+        List<WeekViewEvent> events = getEvents(newYear, newMonth);
+        return events;    }
+
+    public List<WeekViewEvent> getEvents(int newYear, int newMonth)
+    {
+        List<WeekViewEvent> myWeek = new ArrayList<>();
+        myWeek.add(new WeekViewEvent(1, "test", 2016, 1, 18, 8, 0, 2016, 1, 22, 8, 0));
+        return myWeek;
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
