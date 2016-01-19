@@ -237,4 +237,31 @@ public class RequestManager {
                 });
         _requestQueue.add(jsObjRequest);
     }
+
+    /*
+    public void getEvents(String begin, String end, final APIListener<List<Event>> listener)
+    {
+        String finalRequest = REQUEST_URL + "/planning?token=" + _token + "&start=" + begin + "&end=" + end;//&start=2016-01-17&end=2016-01-22
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<List<Event>>(){}.getType();
+                    List<Event> events = (List<Event) gson.fromJson(array.toString(), listType);
+                    listener.getResult(events);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", error.getMessage());
+            }
+        });
+        _requestQueue.add(jsObjRequest);
+    } */
 }
