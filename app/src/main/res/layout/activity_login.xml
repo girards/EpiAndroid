@@ -19,23 +19,34 @@
         android:layout_marginBottom="8dp"
         android:visibility="gone" />
 
+    <!--
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:src="@mipmap/ic_epitech_logo"/>
+    -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/logo_epitech" />
+    </FrameLayout>
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <LinearLayout
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="-80dp"
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout

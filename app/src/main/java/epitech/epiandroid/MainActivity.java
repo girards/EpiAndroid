@@ -37,7 +37,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements PlanningFragment.OnFragmentInteractionListener, GradesFragment.OnFragmentInteractionListener,
-        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener, ProjectViewFragment.OnFragmentInteractionListener {
+        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener,
+        ProjectViewFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
 
     private ImageView _profilePicture;
     private TextView _title;
@@ -76,10 +77,17 @@ public class MainActivity extends AppCompatActivity
                 _currentUser = object;
                 _title.setText(myWordUtils.capitalize(_currentUser.getTitle()));
                 _email.setText(_currentUser.getMail());
+                Fragment fragment = null;
+                try {
+                    fragment = ProfileFragment.newInstance(_currentUser);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
             }
         });
-
-
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

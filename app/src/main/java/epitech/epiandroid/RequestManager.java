@@ -151,7 +151,7 @@ public class RequestManager {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(
                 Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONObject response) throws JSONException {
+            public void onResponse(JSONObject response) {
                 Gson gson = new GsonBuilder().create();
                 Project project = gson.fromJson(response.toString(), Project.class);
                 listener.getResult(project);
