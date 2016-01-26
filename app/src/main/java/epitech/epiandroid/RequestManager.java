@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -97,14 +98,46 @@ public class RequestManager {
     {
         String finalRequest = REQUEST_URL + "/user?token=" + _token + "&user=" + login;
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                            Gson gson = new GsonBuilder().create();
-                            EpitechUser user = gson.fromJson(response.toString(), EpitechUser.class);
-                            Log.d("USER", "User Login is "+ user.getLogin() + ", Title is " + user.getTitle() + ", email is " + user.getMail());
-                            listener.getResult(user);
+                        Gson gson = new GsonBuilder().create();
+                        EpitechUser user = gson.fromJson(response.toString(), EpitechUser.class);
+                        Log.d("USER", "User Login is " + user.getLogin() + ", Title is " + user.getTitle() + ", email is " + user.getMail());
+                        JSONArray gpa = null;
+                        JSONObject stringGpa = null;
+                        JSONObject log = null;
+                        String logActive = null;
+                        String logIdle = null;
+                        try {
+                            gpa = response.getJSONArray("gpa");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            stringGpa = gpa.getJSONObject(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            user.setGpa(stringGpa.getString("gpa"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            log = response.getJSONObject("nsstat");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            logActive = log.getString("active");
+                            logIdle = log.getString("idle");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        user.setLog(logActive.toString(), logIdle.toString());
+                        listener.getResult(user);
                     }
                 }, new Response.ErrorListener() {
                     @Override

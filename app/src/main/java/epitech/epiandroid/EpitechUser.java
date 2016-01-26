@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.lang.reflect.Array;
+
 /**
  * Created by girard_s on 12/01/2016 for Epitech.
  */
@@ -28,6 +30,10 @@ public class EpitechUser {
 
     @SerializedName("location")
     private String _location;
+
+    private String _gpa;
+    private String _logActive;
+    private String _logIdle;
     private Bitmap _profilePicture;
 
     public EpitechUser(){
@@ -64,6 +70,19 @@ public class EpitechUser {
 
     public Integer getStudentYear() {
         return _studentYear;
+    }
+
+    public String getGpa() { return _gpa; }
+
+    public void setGpa(String gpa) { _gpa = gpa; }
+
+    public String getLogActive() { return _logActive; }
+
+    public String getLogIdle() { return _logIdle; }
+
+    public void setLog(String active, String idle) {
+        _logActive = active;
+        _logIdle = idle;
     }
 
     public void accessProfilePicture() {

@@ -31,6 +31,7 @@ import com.android.volley.Request;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity
     private TextView _title;
     private TextView _email;
     private EpitechUser _currentUser;
-
     private DrawerLayout mDrawer;
 
     @Override
@@ -100,6 +100,20 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
     }
+
+    public void profileClick(View view) {
+        Fragment fragment = null;
+        try {
+            fragment = ProfileFragment.newInstance(_currentUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        mDrawer.closeDrawers();
+    }
+
 
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on

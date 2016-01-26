@@ -2,8 +2,9 @@
 <resources>
     <color name="colorPrimary">#2196F3</color>
     <color name="colorPrimaryDark">#0073ff</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#0073ff</color><!-- #FF408 -->
     <color name="fatGray">#636363</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="green">#08F700</color>
 </resources>
