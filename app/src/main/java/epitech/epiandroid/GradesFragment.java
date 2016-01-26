@@ -31,6 +31,7 @@ public class GradesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private ListView _gradesView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,6 +72,15 @@ public class GradesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_grades, container, false);
+
+        _gradesView = (ListView) rootView.findViewById(R.id.gradeListView);
+        RequestManager.getInstance().getUserGrades(new APIListener<List<Grade>>() {
+            @Override
+            public void getResult(List<Grade> object) {
+                GradeAdapter adapter = new GradeAdapter(getContext(), object);
+                _gradesView.setAdapter(adapter);
+            }
+        });
 
         return rootView;
     }

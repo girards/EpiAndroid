@@ -173,6 +173,29 @@ public class RequestManager {
         _requestQueue.add(jsArrayRequest);
     }
 
+    public void getUserGrades(final APIListener<List<Grade>> listener)
+    {
+        String finalRequest = REQUEST_URL + "/marks?token=" + _token;
+
+        JsonArrayRequest jsArrayRequest = new JsonArrayRequest(
+                Request.Method.GET, finalRequest, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray array) {
+                Gson gson = new Gson();
+                Type listType = new TypeToken<List<Grade>>(){}.getType();
+                List<Grade> grades = (List<Grade>) gson.fromJson(array.toString(), listType);
+                listener.getResult(grades);
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        _requestQueue.add(jsArrayRequest);
+    }
+
     public void getProjectData(String scolarYear, String codeModule, String codeInstance, String codeActivity, final APIListener<Project> listener) {
         String finalRequest = REQUEST_URL + "/project?token=" + _token
                                             + "&scolaryear=" + scolarYear
