@@ -91,7 +91,7 @@ public class ProjetsFragment extends android.support.v4.app.Fragment {
                 ProjectViewFragment fragment = null;
 
                 try {
-                    fragment = fragment.newInstance(projet);
+                    fragment = fragment.newInstance(projet, projet.isRegistered());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

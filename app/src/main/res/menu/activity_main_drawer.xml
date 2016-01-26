@@ -18,6 +18,10 @@
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_messages"
             android:title="Messages" />
+        <item
+            android:id="@+id/nav_module"
+            android:icon="@mipmap/ic_modules"
+            android:title="Messages" />
     </group>
 
     <item android:title="Communicate">

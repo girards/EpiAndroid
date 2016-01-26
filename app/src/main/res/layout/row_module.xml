@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/moduleCredit"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:shadowColor="@color/text_shadow"
+        android:background="#000000"
+        android:shadowDx="-2"
+        android:shadowDy="-2"
+        android:shadowRadius="1"
+        tools:background="#AAA"
+        />
+
+    <ImageView
+        android:id="@+id/registered"
+        android:layout_marginTop="7.5dp"
+        android:layout_marginRight="7.5dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/module"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/moduleCredit"
+        android:layout_alignTop="@+id/moduleCredit"
+        android:textStyle="bold"
+        tools:text="Nom du module"
+        />
+
+    <TextView
+        android:id="@+id/semester"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/module"
+        android:layout_below="@+id/module"
+        tools:text="Semestre"
+        />
+
+</RelativeLayout>

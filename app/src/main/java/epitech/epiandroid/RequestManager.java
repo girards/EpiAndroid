@@ -3,6 +3,7 @@ package epitech.epiandroid;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.CompoundButton;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -98,7 +100,7 @@ public class RequestManager {
     {
         String finalRequest = REQUEST_URL + "/user?token=" + _token + "&user=" + login;
 
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -246,6 +248,40 @@ public class RequestManager {
         _requestQueue.add(jsArrayRequest);
     }
 
+    public void getUserModule(final int semester, final APIListener<List<ModuleOverview>> listener) {
+        String finalRequest = REQUEST_URL + "/modules?token=" + _token;
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) throws JSONException {
+                        JSONArray array =  response.getJSONArray("modules");
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<List<ModuleOverview>>() {
+                        }.getType();
+                        List<ModuleOverview> modules = (List<ModuleOverview>) gson.fromJson(array.toString(), listType);
+                        Iterator<ModuleOverview> it = modules.iterator();
+                        if (semester == -1);
+                        else
+                        {
+                            while (it.hasNext()) {
+                                ModuleOverview m = it.next();
+                                if (m.getSemester() != semester) {
+                                    it.remove();
+                                }
+                            }
+                        }
+                        listener.getResult(modules);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error", error.getMessage());
+                    }
+                });
+        _requestQueue.add(jsObjRequest);
+    }
+    
     public void getPhotoUrl(String login, final APIListener<Bitmap> listener) {
         String finalRequest = REQUEST_URL + "/photo?token=" + _token + "&login=" + login;
 
@@ -289,6 +325,31 @@ public class RequestManager {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Error", error.getMessage());
+                    }
+                });
+        _requestQueue.add(jsObjRequest);
+    }
+
+
+    public void registerToProject(Project project, final APIListener<Boolean> listener) {
+        String finalRequest = REQUEST_URL + "/project?token=" + _token
+                + "&scolaryear=" + project.get_scolarYear()
+                + "&codemodule=" + project.get_moduleCode()
+                + "&codeinstance=" + project.get_codeInstance()
+                + "&codeacti=" + project.get_codeActi();
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, finalRequest, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        listener.getResult(true);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        listener.getResult(false);
                     }
                 });
         _requestQueue.add(jsObjRequest);

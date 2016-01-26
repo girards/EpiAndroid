@@ -31,20 +31,19 @@ import com.android.volley.Request;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements PlanningFragment.OnFragmentInteractionListener, GradesFragment.OnFragmentInteractionListener,
-        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener,
-        ProjectViewFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener {
+        MessagesFragment.OnFragmentInteractionListener, ProjetsFragment.OnFragmentInteractionListener, ProjectViewFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener, ModuleOverviewFragment.OnFragmentInteractionListener {
 
     private ImageView _profilePicture;
     private TextView _title;
     private TextView _email;
-    private EpitechUser _currentUser;
+    private static EpitechUser _currentUser;
+
     private DrawerLayout mDrawer;
 
     @Override
@@ -89,6 +88,8 @@ public class MainActivity extends AppCompatActivity
                 setTitle("Accueil");
             }
         });
+
+
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -134,6 +135,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_manage:
                 fragmentClass = MessagesFragment.class;
+                break;
+            case R.id.nav_module:
+                fragmentClass = ModuleOverviewFragment.class;
                 break;
             default:
                 fragmentClass = PlanningFragment.class;
@@ -191,6 +195,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    public static EpitechUser getUser()
+    {
+        return _currentUser;
     }
 
     public void onFragmentInteraction(Uri uri){

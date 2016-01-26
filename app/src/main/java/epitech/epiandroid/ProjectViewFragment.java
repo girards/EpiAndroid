@@ -1,7 +1,7 @@
 package epitech.epiandroid;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
+import android.widget.Toast;
 
 
 /**
@@ -27,7 +29,9 @@ public class ProjectViewFragment extends android.support.v4.app.Fragment {
     private Project _project;
     View view;
     private TextView _projectName;
+    private Button _isRegistered;
     private ProgressBar prg;
+    private ProgressBar Loader;
 
     private OnFragmentInteractionListener mListener;
 
@@ -36,9 +40,10 @@ public class ProjectViewFragment extends android.support.v4.app.Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProjectViewFragment newInstance(ProjectOverview project) {
+    public static ProjectViewFragment newInstance(ProjectOverview project, boolean registered) {
         ProjectViewFragment fragment = new ProjectViewFragment();
         Bundle args = new Bundle();
+        args.putBoolean("registered", registered);
         args.putString("scolarYear", project.getScolarYear());
         args.putString("moduleCode", project.getModuleCode());
         args.putString("instanceCode", project.getInstanceCode());
@@ -58,7 +63,11 @@ public class ProjectViewFragment extends android.support.v4.app.Fragment {
 
         view = inflater.inflate(R.layout.fragment_project_view, container, false);
         prg = (ProgressBar)view.findViewById(R.id.progressProject);
+        Loader = (ProgressBar) view.findViewById(R.id.loader);
+        prg.setVisibility(View.GONE);
         _projectName = (TextView) view.findViewById(R.id.projectName);
+        _isRegistered = (Button) view.findViewById(R.id.isRegister);
+        _isRegistered.setVisibility(view.GONE);
         RequestManager.getInstance().getProjectData(getArguments().getString("scolarYear"),
                 getArguments().getString("moduleCode"),
                 getArguments().getString("instanceCode"),
@@ -66,13 +75,31 @@ public class ProjectViewFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void getResult(Project object) {
                         _project = object;
-                        prg.setVisibility(View.GONE);
-                        Log.d("Value", String.valueOf(_project.getTimePercentage()));
+                        _isRegistered.setBackgroundColor(Color.parseColor(String.format("#%X", _project.get_moduleCode().hashCode())));
                         prg.setProgress((int) _project.getTimePercentage());
                         prg.setVisibility(View.VISIBLE);
+                        Loader.setVisibility(View.GONE);
+                        _isRegistered.setVisibility(view.VISIBLE);
                         _projectName.setText(_project.get_projectTitle());
                     }
                 });
+        _isRegistered.setOnClickListener(new View.OnClickListener()  {
+            @Override
+            public void onClick(View v) {
+                Log.d("Passing", "in onCheckedChanfe listener");
+                RequestManager.getInstance().registerToProject(_project,
+                new APIListener<Boolean>() {
+                    @Override
+                    public void getResult(Boolean object) {
+                        if (object == true);
+                        else {
+                            Toast toast = Toast.makeText(getContext(), "Cannot Register", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+                });
+            }
+        });
         return view;
     }
 
