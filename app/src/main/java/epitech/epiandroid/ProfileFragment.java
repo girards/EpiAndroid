@@ -108,6 +108,18 @@ public class ProfileFragment extends android.support.v4.app.Fragment
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment_profile, container, false);
+        _profilePicture = (ImageView) mView.findViewById(R.id.profilePicture);
+        _email = (TextView) mView.findViewById(R.id.mail);
+        _title = (TextView) mView.findViewById(R.id.title);
+        _gpa = (TextView) mView.findViewById(R.id.gpa);
+        _logActive = _currentUser.getLogActive();
+        _logIdle = _currentUser.getLogIdle();
         RequestManager.getInstance().getPhotoUrl(RequestManager.getInstance().getLogin(), new APIListener<Bitmap>() {
             @Override
             public void getResult(Bitmap object) {
@@ -124,17 +136,6 @@ public class ProfileFragment extends android.support.v4.app.Fragment
                 _gpa.setText(_currentUser.getGpa());
             }
         });
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_profile, container, false);
-        _profilePicture = (ImageView) mView.findViewById(R.id.profilePicture);
-        _email = (TextView) mView.findViewById(R.id.mail);
-        _title = (TextView) mView.findViewById(R.id.title);
-        _gpa = (TextView) mView.findViewById(R.id.gpa);
-        _logActive = _currentUser.getLogActive();
-        _logIdle = _currentUser.getLogIdle();
         Log.d("USER", "_logActive = " + _logActive + " _logIdle = " + _logIdle);
         setPieChart();
         return mView;
