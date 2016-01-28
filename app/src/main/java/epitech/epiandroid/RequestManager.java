@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -179,13 +180,30 @@ public class RequestManager {
     {
         String finalRequest = REQUEST_URL + "/marks?token=" + _token;
 
-        JsonArrayRequest jsArrayRequest = new JsonArrayRequest(
-                Request.Method.GET, finalRequest, null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, finalRequest, null, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray array) {
+            public void onResponse(JSONObject object) {
+                JSONArray array = null;
+                try {
+                    array = object.getJSONArray("notes");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 Gson gson = new Gson();
                 Type listType = new TypeToken<List<Grade>>(){}.getType();
                 List<Grade> grades = (List<Grade>) gson.fromJson(array.toString(), listType);
+                Collections.reverse(grades);
+                Iterator<Grade> it = grades.iterator();
+                while (it.hasNext()) {
+                    Grade g = it.next();
+                    Log.d("test", "Grade comment = " + g.getComment());
+                    if (g.getComment() == null)
+                        continue;
+                    if (g.getComment().equals("[INTRA] not registered") == true) {
+                        it.remove();
+                    }
+                }
                 listener.getResult(grades);
             }
         }, new Response.ErrorListener() {
@@ -195,7 +213,7 @@ public class RequestManager {
 
             }
         });
-        _requestQueue.add(jsArrayRequest);
+        _requestQueue.add(jsObjectRequest);
     }
 
     public void getProjectData(String scolarYear, String codeModule, String codeInstance, String codeActivity, final APIListener<Project> listener) {
