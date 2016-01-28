@@ -6,15 +6,42 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/comment"
+        android:id="@+id/note"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:shadowColor="@color/text_shadow"
+        android:background="#000000"
+        android:shadowDx="-2"
+        android:shadowDy="-2"
+        android:shadowRadius="1"
+        tools:background="#AAA"
+        />
+
+
+    <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_alignTop="@+id/avatar"
+        android:layout_toRightOf="@+id/note"
+        android:layout_alignTop="@+id/note"
         android:textStyle="bold"
-        tools:text="Comment"
+        tools:text="title"
+        />
+
+    <TextView
+        android:id="@+id/comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_alignLeft="@+id/title"
+        android:layout_below="@+id/title"
+        tools:text="comment"
         />
 
 

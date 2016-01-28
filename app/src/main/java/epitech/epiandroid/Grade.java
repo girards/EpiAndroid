@@ -11,6 +11,9 @@ public class Grade {
     @SerializedName("scolaryear")
     private String _scolaryear;
 
+    @SerializedName("codemodule")
+    private String _codemodule;
+
     @SerializedName("titlemodule")
     private String _titleModule;
 
@@ -35,6 +38,8 @@ public class Grade {
     }
 
     public String getScolaryear() { return _scolaryear; }
+
+    public String getCodemodule() { return _codemodule; }
 
     public String getTitleModule() { return _titleModule; }
 
