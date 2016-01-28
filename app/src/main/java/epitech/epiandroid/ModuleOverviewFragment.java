@@ -1,6 +1,9 @@
 package epitech.epiandroid;
 
+import android.app.AlertDialog;
+import android.app.Application;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,7 +97,21 @@ public class ModuleOverviewFragment extends android.support.v4.app.Fragment{
         _moduleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ModuleOverview module  = (ModuleOverview)_moduleView.getItemAtPosition(position);
-
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Inscription")
+                        .setMessage("Voulez vous vraiment vous inscrire au module " + module.getTitle())
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
         });
 
