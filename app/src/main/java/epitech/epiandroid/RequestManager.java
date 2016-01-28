@@ -210,7 +210,7 @@ public class RequestManager {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.d("Error", error.getLocalizedMessage());
             }
         });
         _requestQueue.add(jsObjectRequest);
