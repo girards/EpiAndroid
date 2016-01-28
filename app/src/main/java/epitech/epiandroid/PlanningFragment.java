@@ -1,11 +1,13 @@
 package epitech.epiandroid;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -39,6 +43,8 @@ public class PlanningFragment extends android.support.v4.app.Fragment
     private View mView;
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
+    private List<Event> mEventList = new ArrayList<Event>();
+    private boolean isEventdone = false;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -154,7 +160,30 @@ public class PlanningFragment extends android.support.v4.app.Fragment
     public List<WeekViewEvent> getEvents(int newYear, int newMonth)
     {
         List<WeekViewEvent> myWeek = new ArrayList<>();
-        myWeek.add(new WeekViewEvent(1, "test", 2016, 1, 18, 8, 0, 2016, 1, 22, 8, 0));
+        RequestManager.getInstance().getEvents("2016-01-27", "2016-01-30", new APIListener<List<Event>>() {
+            @Override
+            public void getResult(List<Event> object) {
+                mEventList = object;
+                isEventdone = true;
+                Log.d("test", "isEventdone = true");
+            }
+        });//&start=2016-01-17&end=2016-01-22
+        //while (isEventdone == false);
+        int i = 1;
+        for (Iterator<Event> it = mEventList.iterator(); it.hasNext();) {
+            Event e = it.next();
+            Calendar calStart = Calendar.getInstance();
+            calStart.setTime(e.get_start());
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(e.get_end());
+            WeekViewEvent event = new WeekViewEvent(i, e.get_actiTitle(), calStart, calEnd);
+            if (e.get_codeModule() == null || String.format("#%X", e.get_codeModule().hashCode()).length() != 9)
+                ;
+            else
+                event.setColor(Color.parseColor(String.format("#%X", e.get_codeModule().hashCode())));
+            myWeek.add(event);
+            i++;
+        }
         return myWeek;
     }
 
