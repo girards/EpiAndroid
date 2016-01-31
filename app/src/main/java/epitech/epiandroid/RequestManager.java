@@ -1,5 +1,6 @@
 package epitech.epiandroid;
 
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,8 +28,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by girard_s on 11/01/2016 for Epitech.
@@ -349,28 +353,113 @@ public class RequestManager {
     }
 
 
-    public void registerToProject(Project project, final APIListener<Boolean> listener) {
-        String finalRequest = REQUEST_URL + "/project?token=" + _token
-                + "&scolaryear=" + project.get_scolarYear()
-                + "&codemodule=" + project.get_moduleCode()
-                + "&codeinstance=" + project.get_codeInstance()
-                + "&codeacti=" + project.get_codeActi();
+    public void registerToProject(final Project project, final APIListener<Boolean> listener) {
+        String finalRequest = REQUEST_URL + "/project";
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.POST, finalRequest, null, new Response.Listener<JSONObject>() {
-
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalRequest,
+                new Response.Listener<String>()
+                {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response)
+                    {
                         listener.getResult(true);
                     }
-                }, new Response.ErrorListener() {
-
+                },
+                new Response.ErrorListener()
+                {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse(VolleyError error)
+                    {
                         listener.getResult(false);
                     }
-                });
-        _requestQueue.add(jsObjRequest);
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("token", _token);
+                params.put("scolaryear", project.get_scolarYear());
+                params.put("codeinstance", project.get_codeInstance());
+                params.put("codemodule", project.get_moduleCode());
+                params.put("codeacti", project.get_codeActi());
+                return params;
+            }
+        };
+        _requestQueue.add(stringRequest);
+    }
+
+    /* public void enterToken(final Event event, final String tokenEntered, final APIListener<Boolean> listener) {
+        String finalRequest = REQUEST_URL + "/token";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalRequest,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        listener.getResult(true);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        listener.getResult(false);
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("token", _token);
+                params.put("scolaryear", event.getScolarYear());
+                params.put("codemodule", event.getCodeModule());
+                params.put("codeinstance", event.getCodeInstance());
+                params.put("codeactic", event.getCodeActi());
+                params.put("codeevent", event.getCodeEvent());
+                params.put("tokenvalidationcode", tokenEntered);
+                return params;
+            }
+        };
+        _requestQueue.add(stringRequest);
+    } */
+
+    public void registerToModule(final ModuleOverview module, final APIListener<Boolean> listener) {
+        String finalRequest = REQUEST_URL + "/module";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalRequest,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        listener.getResult(true);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        listener.getResult(false);
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("token", _token);
+                params.put("scolaryear", module.getScolarYear());
+                params.put("codemodule", module.getCodeModule());
+                params.put("codeinstance", module.getCodeInstance());
+                return params;
+            }
+        };
+        _requestQueue.add(stringRequest);
     }
 
 
@@ -396,5 +485,43 @@ public class RequestManager {
             }
         });
         _requestQueue.add(jsArrayRequest);
+    }
+
+    public void useToken(final Event e, final String mToken, final APIListener<Boolean> listener) {
+        String finalRequest = REQUEST_URL + "/token";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalRequest,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response)
+                    {
+                        listener.getResult(true);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error)
+                    {
+                        listener.getResult(false);
+                    }
+                })
+        {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("token", _token);
+                params.put("scolaryear", e.get_scolaryear());
+                params.put("codemodule", e.get_codeModule());
+                params.put("codeinstance", e.get_codeInstance());
+                params.put("codeacti", e.get_codeActi());
+                params.put("codeevent", e.get_codeEvent());
+                params.put("tokenvalidationcode", mToken);
+                return params;
+            }
+        };
+        _requestQueue.add(stringRequest);
     }
 }

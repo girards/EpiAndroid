@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -62,6 +63,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
+    private ListView _messagesView;
     private static EpitechUser _currentUser;
     private ImageView _profilePicture;
     private TextView _title;
@@ -86,14 +90,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(EpitechUser user) {
         ProfileFragment fragment = new ProfileFragment();
@@ -120,6 +117,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment
         _gpa = (TextView) mView.findViewById(R.id.gpa);
         _logActive = _currentUser.getLogActive();
         _logIdle = _currentUser.getLogIdle();
+
         RequestManager.getInstance().getPhotoUrl(RequestManager.getInstance().getLogin(), new APIListener<Bitmap>() {
             @Override
             public void getResult(Bitmap object) {
@@ -138,6 +136,14 @@ public class ProfileFragment extends android.support.v4.app.Fragment
         });
         Log.d("USER", "_logActive = " + _logActive + " _logIdle = " + _logIdle);
         setPieChart();
+        _messagesView = (ListView) mView.findViewById(R.id.messagesListViewprofile);
+        RequestManager.getInstance().getUserMessage(new APIListener<List<Message>>() {
+            @Override
+            public void getResult(List<Message> object) {
+                MessageAdapter adapter = new MessageAdapter(getContext(), object);
+                _messagesView.setAdapter(adapter);
+            }
+        });
         return mView;
     }
 

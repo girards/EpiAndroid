@@ -1,20 +1,26 @@
 package epitech.epiandroid;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.BoringLayout;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.android.volley.Request;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -41,6 +47,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
 
     private WeekView mWeekView;
     private View mView;
+    private String mToken = "";
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
     private List<Event> mEventList = new ArrayList<Event>();
@@ -86,6 +93,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,7 +105,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         mWeekView = (WeekView) mView.findViewById(R.id.weekView);
 
         // Set an action when any event is clicked.
-        mWeekView.setOnEventClickListener(mEventClickListener);
+        mWeekView.setOnEventClickListener(this);
 
         // The week view has infinite scrolling horizontally. We have to provide the events of a
         // month every time the month changes on the week view.
@@ -133,9 +141,53 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         mListener = null;
     }
 
+    public Event getEventFromTitle(String title) {
+        for (Iterator<Event> it = mEventList.iterator(); it.hasNext(); ) {
+            Event e = it.next();
+            if (e.get_actiTitle().equals(title))
+                return e;
+            else ;
+        }
+        return null;
+    }
+
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        Log.d("Loged", "On Event Click");
+        final Event e = getEventFromTitle(event.getName());
+        if (e.is_allowToken() == true) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Token");
 
+// Set up the input
+            final EditText input = new EditText(getContext());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mToken = input.getText().toString();
+                    RequestManager.getInstance().useToken(e, mToken, new APIListener<Boolean>() {
+
+                        @Override
+                        public void getResult(Boolean object) {
+
+                        }
+                    });
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
     }
 
     @Override
@@ -152,13 +204,14 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         }
     };
 
+
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = getEvents(newYear, newMonth);
-        return events;    }
+        return events;
+    }
 
-    public List<WeekViewEvent> getEvents(int newYear, int newMonth)
-    {
+    public List<WeekViewEvent> getEvents(int newYear, int newMonth) {
         List<WeekViewEvent> myWeek = new ArrayList<>();
         RequestManager.getInstance().getEvents("2016-01-27", "2016-01-30", new APIListener<List<Event>>() {
             @Override
@@ -170,7 +223,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         });//&start=2016-01-17&end=2016-01-22
         //while (isEventdone == false);
         int i = 1;
-        for (Iterator<Event> it = mEventList.iterator(); it.hasNext();) {
+        for (Iterator<Event> it = mEventList.iterator(); it.hasNext(); ) {
             Event e = it.next();
             Calendar calStart = Calendar.getInstance();
             calStart.setTime(e.get_start());
@@ -193,7 +246,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
+     * <p/>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
