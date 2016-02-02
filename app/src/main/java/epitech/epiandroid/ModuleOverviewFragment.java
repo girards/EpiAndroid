@@ -96,13 +96,21 @@ public class ModuleOverviewFragment extends android.support.v4.app.Fragment{
 
         _moduleView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ModuleOverview module  = (ModuleOverview)_moduleView.getItemAtPosition(position);
+                final ModuleOverview module  = (ModuleOverview)_moduleView.getItemAtPosition(position);
                 new AlertDialog.Builder(getContext())
                         .setTitle("Inscription")
                         .setMessage("Voulez vous vraiment vous inscrire au module " + module.getTitle())
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
+                                RequestManager.getInstance().registerToModule(module, new APIListener<Boolean>(){
+                                    public void getResult(Boolean bool) {
+                                        if (bool == true);
+                                        else {
+                                            Toast toast = Toast.makeText(getContext(), "Cannot Register", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        }
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

@@ -13,6 +13,13 @@ public class ModuleOverview {
     @SerializedName("codeinstance")
     private String codeInstance;
 
+    @SerializedName("scolaryear")
+    private String scolarYear;
+
+    public String getScolarYear() {
+        return scolarYear;
+    }
+
     private String title;
 
     private String grade;

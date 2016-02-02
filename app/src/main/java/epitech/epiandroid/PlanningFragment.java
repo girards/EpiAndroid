@@ -17,12 +17,10 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,10 +41,11 @@ public class PlanningFragment extends android.support.v4.app.Fragment
 
     private WeekView mWeekView;
     private View mView;
+    private String mToken = "";
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
     private List<Event> mEventList = new ArrayList<Event>();
-    private boolean isEventDone = false;
+    private boolean isEventdone = false;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -88,7 +87,6 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -100,7 +98,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         mWeekView = (WeekView) mView.findViewById(R.id.weekView);
 
         // Set an action when any event is clicked.
-        mWeekView.setOnEventClickListener(mEventClickListener);
+        mWeekView.setOnEventClickListener(this);
 
         // The week view has infinite scrolling horizontally. We have to provide the events of a
         // month every time the month changes on the week view.
@@ -136,16 +134,69 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         mListener = null;
     }
 
+    public Event getEventFromTitle(String title) {
+        for (Iterator<Event> it = mEventList.iterator(); it.hasNext(); ) {
+            Event e = it.next();
+            if (e.get_actiTitle().equals(title))
+                return e;
+            else ;
+        }
+        return null;
+    }
+
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        Log.d("Loged", "On Event Click");
+        final Event e = getEventFromTitle(event.getName());
+        if (e.is_allowToken() == true) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Token");
 
+// Set up the input
+            final EditText input = new EditText(getContext());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+// Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mToken = input.getText().toString();
+                    RequestManager.getInstance().useToken(e, mToken, new APIListener<Boolean>() {
+
+                        @Override
+                        public void getResult(Boolean object) {
+
+                        }
+                    });
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
     }
+
 
     @Override
     public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
 
     }
 
+    MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
+        @Override
+        public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
+            // Populate the week view with some events.
+            List<WeekViewEvent> events = getEvents(newYear, newMonth);
+            return events;
+        }
+    };
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
