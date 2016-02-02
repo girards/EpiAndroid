@@ -17,10 +17,12 @@ import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,7 +46,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
     private List<Event> mEventList = new ArrayList<Event>();
-    private boolean isEventdone = false;
+    private boolean isEventDone = false;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -86,6 +88,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,7 +105,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
         // The week view has infinite scrolling horizontally. We have to provide the events of a
         // month every time the month changes on the week view.
 
-        mWeekView.setMonthChangeListener(mMonthChangeListener);
+        mWeekView.setMonthChangeListener(this);
 
         // Set long press listener for events.
         mWeekView.setEventLongPressListener(mEventLongPressListener);
@@ -143,14 +146,6 @@ public class PlanningFragment extends android.support.v4.app.Fragment
 
     }
 
-    MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
-        @Override
-        public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-            // Populate the week view with some events.
-            List<WeekViewEvent> events = getEvents(newYear, newMonth);
-            return events;
-        }
-    };
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -160,16 +155,22 @@ public class PlanningFragment extends android.support.v4.app.Fragment
     public List<WeekViewEvent> getEvents(int newYear, int newMonth)
     {
         List<WeekViewEvent> myWeek = new ArrayList<>();
-        RequestManager.getInstance().getEvents("2016-01-27", "2016-01-30", new APIListener<List<Event>>() {
-            @Override
-            public void getResult(List<Event> object) {
-                mEventList = object;
-                isEventdone = true;
-                Log.d("test", "isEventdone = true");
-            }
-        });//&start=2016-01-17&end=2016-01-22
-        //while (isEventdone == false);
-        int i = 1;
+        String month = String.valueOf(newMonth);
+        if (newMonth < 10)
+            month = "0" + String.valueOf(newMonth);
+        String dateS = String.valueOf(newYear) + "-" + month + "-01";
+        String dateE = String.valueOf(newYear) + "-" + month + "-07";
+        if (isEventDone == false) {
+            RequestManager.getInstance().getEvents(dateS, dateE, new APIListener<List<Event>>() {
+                @Override
+                public void getResult(List<Event> object) {
+                    mEventList = object;
+                    isEventDone = true;
+                    mWeekView.notifyDatasetChanged();
+                }
+            });//&start=2016-01-17&end=2016-01-22
+        }
+        int i = 0;
         for (Iterator<Event> it = mEventList.iterator(); it.hasNext();) {
             Event e = it.next();
             Calendar calStart = Calendar.getInstance();
@@ -181,7 +182,8 @@ public class PlanningFragment extends android.support.v4.app.Fragment
                 ;
             else
                 event.setColor(Color.parseColor(String.format("#%X", e.get_codeModule().hashCode())));
-            myWeek.add(event);
+            if (e.get_actiTitle() != null)
+                myWeek.add(event);
             i++;
         }
         return myWeek;
