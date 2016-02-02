@@ -1,16 +1,20 @@
 package epitech.epiandroid;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
@@ -45,7 +49,7 @@ public class PlanningFragment extends android.support.v4.app.Fragment
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
     private List<Event> mEventList = new ArrayList<Event>();
-    private boolean isEventdone = false;
+    private boolean isEventDone = false;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
